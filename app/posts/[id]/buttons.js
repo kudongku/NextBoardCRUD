@@ -18,7 +18,7 @@ export default function Buttons() {
   };
 
   const handleDeleteConfirmation = async () => {
-    await fetch('/api' + currentPath + '/delete', {
+    await fetch('/api' + currentPath, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
