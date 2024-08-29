@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -25,14 +26,20 @@ export default function Home() {
 }
 
 const PostThumbnail = ({ post }) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/posts/${post._id}`);
+  };
+
   return (
-    <div className="p-4 border border-gray-300 rounded-lg shadow-lg hover:bg-gray-100 hover:scale-125 transition-transform duration-300 ease-in-out">
-      <Link
-        href={`/posts/` + post._id}
-        className="text-lg font-semibold text-blue-700 hover:text-blue-900 hover:underline transition-colors duration-300"
-      >
+    <div
+      className="p-4 border border-gray-300 rounded-lg shadow-lg hover:bg-gray-100 hover:scale-125 transition-transform duration-300 ease-in-out cursor-pointer"
+      onClick={handleClick}
+    >
+      <div className="text-lg font-semibold text-blue-700 hover:text-blue-900 hover:underline transition-colors duration-300">
         {post.title}
-      </Link>
+      </div>
     </div>
   );
 };
