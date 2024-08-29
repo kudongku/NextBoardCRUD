@@ -13,19 +13,27 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
-      <h1 className="title">게시물</h1>
-      {posts.map((post, i) => (
-        <PostThumbnail key={i} index={i} post={post} />
-      ))}
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 p-6 pt-20">
+      {/* 제목 */}
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">게시물 목록</h1>
+      <div className="w-full max-w-4xl space-y-4">
+        {posts.map((post) => (
+          <PostThumbnail key={post._id} post={post} />
+        ))}
+      </div>
     </div>
   );
 }
 
-function PostThumbnail({ index, post }) {
+const PostThumbnail = ({ post }) => {
   return (
-    <div className="post-thumbnail" key={index}>
-      <Link href={`/posts/` + post._id}>{post.title}</Link>
+    <div className="p-4 border border-gray-300 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300">
+      <Link
+        href={`/posts/` + post._id}
+        className="text-lg font-semibold text-blue-700 hover:underline"
+      >
+        {post.title}
+      </Link>
     </div>
   );
-}
+};

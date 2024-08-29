@@ -9,12 +9,24 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-        <div className="navbar">
-          <Link href="/">Home</Link>
-          <Link href="/posts">Posting</Link>
-        </div>
-        {children}
+      <body className="bg-gray-100 text-gray-900">
+        <header className="bg-blue-600 text-white shadow-md">
+          <div className="container mx-auto px-4 py-2 flex justify-start items-center">
+            <Link
+              href="/"
+              className="text-xl font-bold hover:text-gray-200 mr-4"
+            >
+              게시판
+            </Link>
+            <Link
+              href="/posts"
+              className="text-xl font-bold hover:text-gray-200"
+            >
+              Posting
+            </Link>
+          </div>
+        </header>
+        <main className="container mx-auto px-4 py-6">{children}</main>
       </body>
     </html>
   );
