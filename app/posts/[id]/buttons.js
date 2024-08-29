@@ -26,7 +26,7 @@ export default function Buttons() {
       body: JSON.stringify({ password }),
     })
       .then((res) => {
-        if (res.status == 200) {
+        if (res.status === 200) {
           router.push('/');
         } else {
           alert('비밀번호가 잘못되었습니다.');
@@ -43,13 +43,13 @@ export default function Buttons() {
         <div className="flex space-x-2">
           <button
             onClick={() => router.push(currentPath + '/edit')}
-            className="px-3 py-1.5 bg-blue-300 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 text-sm"
+            className="px-3 py-1.5 bg-blue-300 text-white font-semibold rounded-lg hover:bg-blue-600 hover:scale-110 hover:shadow-lg transition-transform transition-shadow duration-300 ease-in-out text-sm"
           >
             ✍️
           </button>
           <button
             onClick={handleDeleteClick}
-            className="px-3 py-1.5 bg-red-300 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 text-sm"
+            className="px-3 py-1.5 bg-red-300 text-white font-semibold rounded-lg hover:bg-red-600 hover:scale-110 hover:shadow-lg transition-transform transition-shadow duration-300 ease-in-out text-sm"
           >
             🗑️
           </button>
@@ -62,19 +62,19 @@ export default function Buttons() {
             name="password"
             placeholder="비밀번호 입력"
             onChange={handlePasswordChange}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
           />
           <div className="flex space-x-2">
             <button
               onClick={handleDeleteConfirmation}
-              className="px-3 py-1.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 text-sm"
+              className="px-3 py-1.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 hover:scale-110 hover:shadow-lg transition-transform transition-shadow duration-300 ease-in-out text-sm"
             >
               삭제 확인
             </button>
             <button
               type="button"
               onClick={handleDeleteClick}
-              className="px-3 py-1.5 bg-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-400 transition duration-300 text-sm"
+              className="px-3 py-1.5 bg-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-400 hover:scale-110 hover:shadow-lg transition-transform transition-shadow duration-300 ease-in-out text-sm"
             >
               삭제 취소
             </button>

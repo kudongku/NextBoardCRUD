@@ -26,10 +26,10 @@ export default function Home() {
 
 const PostThumbnail = ({ post }) => {
   return (
-    <div className="p-4 border border-gray-300 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300">
+    <div className="p-4 border border-gray-300 rounded-lg shadow-lg hover:bg-gray-100 hover:scale-125 transition-transform duration-300 ease-in-out">
       <Link
         href={`/posts/` + post._id}
-        className="text-lg font-semibold text-blue-700 hover:underline"
+        className="text-lg font-semibold text-blue-700 hover:text-blue-900 hover:underline transition-colors duration-300"
       >
         {post.title}
       </Link>
