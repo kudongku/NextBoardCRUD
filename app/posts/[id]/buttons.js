@@ -4,10 +4,11 @@ import { useRouter, usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 
 export default function Buttons() {
-  let router = useRouter();
-  let currentPath = usePathname();
-  let deletePath = '/api' + currentPath + '/delete';
+  const router = useRouter();
+  const currentPath = usePathname();
+  const deletePath = '/api' + currentPath + '/delete';
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [password, setPassword] = useState('');
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
@@ -22,25 +23,28 @@ export default function Buttons() {
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: '20px',
-      }}
-    >
-      {!showDeleteConfirmation && (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <button onClick={handleEditClick} style={buttonStyle}>
+    <div className="flex justify-end mb-5">
+      {!showDeleteConfirmation ? (
+        <div className="flex space-x-2">
+          <button
+            onClick={handleEditClick}
+            className="px-3 py-1.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 text-sm"
+          >
             수정
           </button>
-          <button onClick={handleDeleteClick} style={buttonStyle}>
+          <button
+            onClick={handleDeleteClick}
+            className="px-3 py-1.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 text-sm"
+          >
             삭제
           </button>
         </div>
-      )}
-      {showDeleteConfirmation && (
-        <form action={deletePath} method="POST">
+      ) : (
+        <form
+          action={deletePath}
+          method="POST"
+          className="flex flex-col space-y-4"
+        >
           <div>
             <input
               id="password"
@@ -48,27 +52,20 @@ export default function Buttons() {
               name="password"
               placeholder="비밀번호 입력"
               onChange={handlePasswordChange}
-              style={{
-                width: '100%',
-                padding: '8px',
-                marginBottom: '10px',
-                boxSizing: 'border-box',
-              }}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+          <div className="flex space-x-2">
             <button
               type="submit"
-              style={{
-                ...buttonStyle,
-                background: 'red',
-              }}
+              className="px-3 py-1.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 text-sm"
             >
               삭제 확인
             </button>
             <button
+              type="button"
               onClick={handleDeleteClick}
-              style={{
-                ...buttonStyle,
-              }}
+              className="px-3 py-1.5 bg-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-400 transition duration-300 text-sm"
             >
               삭제 취소
             </button>
@@ -78,13 +75,3 @@ export default function Buttons() {
     </div>
   );
 }
-
-// 버튼 스타일
-const buttonStyle = {
-  padding: '10px 20px',
-  background: '#0070f3',
-  color: 'white',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
-};
