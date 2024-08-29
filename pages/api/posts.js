@@ -1,4 +1,5 @@
 import { connectDB } from '@/util/database';
+import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
   const db = (await connectDB).db('board');
@@ -12,6 +13,8 @@ export default async function handler(req, res) {
         return res.status(500).json(`${field}을(를) 입력하세요`);
       }
     }
+
+    dto.password = await bcrypt.hash(dto.password, 10);
 
     await db.collection('post').insertOne(dto);
     return res.status(201).redirect('/');

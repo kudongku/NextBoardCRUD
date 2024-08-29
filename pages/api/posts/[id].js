@@ -1,22 +1,29 @@
 import { connectDB } from '@/util/database';
 import { ObjectId } from 'mongodb';
+import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
   const db = (await connectDB).db('board');
 
-  if (req.method == 'GET') {
+  if (req.method === 'GET') {
     const { id } = req.query;
     let post = await db.collection('post').findOne({ _id: new ObjectId(id) });
     return res.status(200).json(post);
   }
 
-  if (req.method == 'POST') {
+  if (req.method === 'POST') {
     let dto = req.body;
     let prePost = await db
       .collection('post')
       .findOne({ _id: new ObjectId(dto._id) });
 
-    if (prePost.password == dto.password) {
+    if (!prePost) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const passwordMatch = await bcrypt.compare(dto.password, prePost.password);
+
+    if (passwordMatch) {
       await db.collection('post').updateOne(
         { _id: new ObjectId(dto._id) },
         {
@@ -28,24 +35,34 @@ export default async function handler(req, res) {
         }
       );
 
-      return res.status(200).redirect('/');
+      return res.status(200).json({ message: 'Post updated successfully' });
+    } else {
+      return res.status(401).json({ message: 'Invalid password' });
     }
-    return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  if (req.method == 'DELETE') {
+  if (req.method === 'DELETE') {
     try {
       let { password } = req.body;
       const { id } = req.query;
       let post = await db.collection('post').findOne({ _id: new ObjectId(id) });
 
-      if (post.password == password) {
-        await db.collection('post').deleteOne({ _id: new ObjectId(id) });
-        return res.status(200).json({ message: '성공적으로 삭제됨' });
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
       }
-      return res.status(400).json({ message: '비밀번호가 틀립니다.' });
+
+      const passwordMatch = await bcrypt.compare(password, post.password);
+
+      if (passwordMatch) {
+        await db.collection('post').deleteOne({ _id: new ObjectId(id) });
+        return res.status(200).json({ message: 'Post deleted successfully' });
+      } else {
+        return res.status(401).json({ message: 'Invalid password' });
+      }
     } catch (error) {
-      res.status(500).json({ message: error.body });
+      res
+        .status(500)
+        .json({ message: 'Error occurred during deletion', error });
     }
   }
 
