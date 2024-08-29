@@ -12,15 +12,22 @@ export default async function handler(req, res) {
 
   if (req.method == 'POST') {
     let dto = req.body;
-    const { id } = req.query;
     let prePost = await db
       .collection('post')
-      .findOne({ _id: new ObjectId(id) });
+      .findOne({ _id: new ObjectId(dto._id) });
 
     if (prePost.password == dto.password) {
-      await db
-        .collection('post')
-        .updateOne({ _id: new ObjectId(id) }, { $set: dto });
+      await db.collection('post').updateOne(
+        { _id: new ObjectId(dto._id) },
+        {
+          $set: {
+            title: dto.title,
+            author: dto.author,
+            content: dto.content,
+          },
+        }
+      );
+
       return res.status(200).redirect('/');
     }
     return res.status(405).json({ message: 'Method not allowed' });
