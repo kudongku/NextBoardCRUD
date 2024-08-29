@@ -18,24 +18,23 @@ export default function Buttons() {
   };
 
   const handleDeleteConfirmation = async () => {
-    try {
-      const response = await fetch('/api' + currentPath + '/delete', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ password }),
+    await fetch('/api' + currentPath + '/delete', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
+    })
+      .then((res) => {
+        if (res.status == 200) {
+          router.push('/');
+        } else {
+          alert('비밀번호가 잘못되었습니다.');
+        }
+      })
+      .catch((error) => {
+        alert('삭제 중 오류가 발생했습니다, ', error);
       });
-
-      if (response.ok) {
-        router.push('/');
-      } else {
-        alert('비밀번호가 잘못되었습니다.');
-      }
-    } catch (error) {
-      console.error('Error deleting post:', error);
-      alert('삭제 중 오류가 발생했습니다, ', error);
-    }
   };
 
   return (
