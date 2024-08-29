@@ -13,8 +13,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 p-6 pt-20">
-      {/* 제목 */}
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 p-6 pt-20 rounded-lg">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">게시물 목록</h1>
       <div className="w-full max-w-4xl space-y-4">
         {posts.map((post) => (
