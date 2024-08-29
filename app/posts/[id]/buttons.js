@@ -6,7 +6,6 @@ import React, { useState } from 'react';
 export default function Buttons() {
   const router = useRouter();
   const currentPath = usePathname();
-  const deletePath = '/api' + currentPath + '/delete';
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [password, setPassword] = useState('');
 
@@ -14,12 +13,29 @@ export default function Buttons() {
     setPassword(event.target.value);
   };
 
-  const handleEditClick = () => {
-    router.push(currentPath + '/edit');
-  };
-
   const handleDeleteClick = () => {
     setShowDeleteConfirmation(!showDeleteConfirmation);
+  };
+
+  const handleDeleteConfirmation = async () => {
+    try {
+      const response = await fetch('/api' + currentPath + '/delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      if (response.ok) {
+        router.push('/');
+      } else {
+        alert('비밀번호가 잘못되었습니다.');
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      alert('삭제 중 오류가 발생했습니다, ', error);
+    }
   };
 
   return (
@@ -27,7 +43,7 @@ export default function Buttons() {
       {!showDeleteConfirmation ? (
         <div className="flex space-x-2">
           <button
-            onClick={handleEditClick}
+            onClick={() => router.push(currentPath + '/edit')}
             className="px-3 py-1.5 bg-blue-300 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 text-sm"
           >
             ✍️
@@ -40,24 +56,18 @@ export default function Buttons() {
           </button>
         </div>
       ) : (
-        <form
-          action={deletePath}
-          method="POST"
-          className="flex flex-col space-y-4"
-        >
-          <div>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              placeholder="비밀번호 입력"
-              onChange={handlePasswordChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+        <div className="flex flex-col space-y-4">
+          <input
+            id="password"
+            type="password"
+            name="password"
+            placeholder="비밀번호 입력"
+            onChange={handlePasswordChange}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
           <div className="flex space-x-2">
             <button
-              type="submit"
+              onClick={handleDeleteConfirmation}
               className="px-3 py-1.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 text-sm"
             >
               삭제 확인
@@ -70,7 +80,7 @@ export default function Buttons() {
               삭제 취소
             </button>
           </div>
-        </form>
+        </div>
       )}
     </div>
   );
