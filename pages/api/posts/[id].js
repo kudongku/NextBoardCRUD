@@ -10,5 +10,15 @@ export default async function handler(req, res) {
     return res.status(200).json(post);
   }
 
+  if (req.method == 'POST') {
+    let dto = req.body;
+    const { id } = req.query;
+
+    await db
+      .collection('post')
+      .updateOne({ _id: new ObjectId(id) }, { $set: dto });
+    return res.status(200).redirect('/');
+  }
+
   return res.status(405).json({ message: 'Method not allowed' });
 }
