@@ -28,15 +28,15 @@ export default function Buttons() {
         <div className="flex space-x-2">
           <button
             onClick={handleEditClick}
-            className="px-3 py-1.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 text-sm"
+            className="px-3 py-1.5 bg-blue-300 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 text-sm"
           >
-            수정
+            ✍️
           </button>
           <button
             onClick={handleDeleteClick}
-            className="px-3 py-1.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 text-sm"
+            className="px-3 py-1.5 bg-red-300 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 text-sm"
           >
-            삭제
+            🗑️
           </button>
         </div>
       ) : (
