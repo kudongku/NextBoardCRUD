@@ -100,9 +100,14 @@ const Comment = ({ comment, postId, onUpdate }) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ comment: editText, password }),
+    }).then((response) => {
+      if (response.ok) {
+        setIsEditing(false);
+        onUpdate();
+      } else {
+        alert('비밀번호가 틀렸습니다.');
+      }
     });
-    setIsEditing(false);
-    onUpdate();
   };
 
   const handleDeleteSubmit = async () => {
@@ -112,9 +117,14 @@ const Comment = ({ comment, postId, onUpdate }) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ password }),
+    }).then((response) => {
+      if (response.ok) {
+        setIsDeleting(false);
+        onUpdate();
+      } else {
+        alert('비밀번호가 틀렸습니다.');
+      }
     });
-    setIsDeleting(false);
-    onUpdate();
   };
 
   return (
