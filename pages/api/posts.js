@@ -1,9 +1,9 @@
-import { connectDB } from '@/util/database';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
-export default async function handler(req, res) {
-  const db = (await connectDB).db('board');
+const prisma = new PrismaClient();
 
+export default async function handler(req, res) {
   if (req.method == 'POST') {
     let dto = req.body;
     const requiredFields = ['title', 'author', 'password', 'content'];
@@ -16,13 +16,32 @@ export default async function handler(req, res) {
 
     dto.password = await bcrypt.hash(dto.password, 10);
 
-    await db.collection('post').insertOne(dto);
-    return res.status(201).redirect('/');
+    try {
+      const newPost = await prisma.post.create({
+        data: {
+          title: dto.title,
+          author: dto.author,
+          password: dto.password,
+          content: dto.content,
+        },
+      });
+      return res.status(201).json(newPost);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: '게시물 작성 중 오류가 발생했습니다.', error });
+    }
   }
 
   if (req.method == 'GET') {
-    let posts = await db.collection('post').find().toArray();
-    return res.status(200).json(posts);
+    try {
+      const posts = await prisma.post.findMany();
+      return res.status(200).json(posts);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: '게시물 조회 중 오류가 발생했습니다.', error });
+    }
   }
 
   return res.status(405).json({ message: 'Method not allowed' });

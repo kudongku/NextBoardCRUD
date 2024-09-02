@@ -1,51 +1,79 @@
-import { connectDB } from '@/util/database';
-import { ObjectId } from 'mongodb';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
-export default async function handler(req, res) {
-  const db = (await connectDB).db('board');
+const prisma = new PrismaClient();
 
+export default async function handler(req, res) {
   if (req.method === 'GET') {
     const { id } = req.query;
-    let post = await db.collection('post').findOne({ _id: new ObjectId(id) });
-    return res.status(200).json(post);
+
+    try {
+      const post = await prisma.post.findUnique({
+        where: {
+          id: parseInt(id),
+        },
+      });
+
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+
+      return res.status(200).json(post);
+    } catch (error) {
+      return res.status(500).json({ message: 'Error fetching post', error });
+    }
   }
 
   if (req.method === 'POST') {
     let dto = req.body;
-    let prePost = await db
-      .collection('post')
-      .findOne({ _id: new ObjectId(dto._id) });
 
-    if (!prePost) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
+    try {
+      const prePost = await prisma.post.findUnique({
+        where: {
+          id: parseInt(req.query.id),
+        },
+      });
 
-    const passwordMatch = await bcrypt.compare(dto.password, prePost.password);
+      if (!prePost) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
 
-    if (passwordMatch) {
-      await db.collection('post').updateOne(
-        { _id: new ObjectId(dto._id) },
-        {
-          $set: {
+      const passwordMatch = await bcrypt.compare(
+        dto.password,
+        prePost.password
+      );
+
+      if (passwordMatch) {
+        const updatedPost = await prisma.post.update({
+          where: {
+            id: parseInt(req.query.id),
+          },
+          data: {
             title: dto.title,
             author: dto.author,
             content: dto.content,
           },
-        }
-      );
+        });
 
-      return res.status(200).json({ message: 'Post updated successfully' });
-    } else {
-      return res.status(401).json({ message: 'Invalid password' });
+        return res.status(200).json({ message: 'Post updated successfully' });
+      } else {
+        return res.status(401).json({ message: 'Invalid password' });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: 'Error updating post', error });
     }
   }
 
   if (req.method === 'DELETE') {
+    const { id } = req.query;
+    const { password } = req.body;
+
     try {
-      let { password } = req.body;
-      const { id } = req.query;
-      let post = await db.collection('post').findOne({ _id: new ObjectId(id) });
+      const post = await prisma.post.findUnique({
+        where: {
+          id: parseInt(id),
+        },
+      });
 
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
@@ -54,13 +82,18 @@ export default async function handler(req, res) {
       const passwordMatch = await bcrypt.compare(password, post.password);
 
       if (passwordMatch) {
-        await db.collection('post').deleteOne({ _id: new ObjectId(id) });
+        await prisma.post.delete({
+          where: {
+            id: parseInt(id),
+          },
+        });
+
         return res.status(200).json({ message: 'Post deleted successfully' });
       } else {
         return res.status(401).json({ message: 'Invalid password' });
       }
     } catch (error) {
-      res
+      return res
         .status(500)
         .json({ message: 'Error occurred during deletion', error });
     }
